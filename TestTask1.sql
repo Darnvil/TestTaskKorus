@@ -23,16 +23,23 @@ USE TestTask1;
 --);
 
 --INSERT INTO ExchRateTable
---VALUES	('EUR', '01-01-2020', 69.25),
---		('EUR', '05-01-2020', 69.23),
---		('EUR', '06-01-2020', 70.10),
---		('USD', '01-01-2020', 62.93),
---		('USD', '02-01-2020', 62.99),
---		('USD', '06-01-2020', 62.98);
+--VALUES	('EUR', '2020-01-01', 69.25),
+--		('EUR', '2020-01-05', 69.23),
+--		('EUR', '2020-01-06', 70.10),
+--		('USD', '2020-01-01', 62.93),
+--		('USD', '2020-01-02', 62.99),
+--		('USD', '2020-01-06', 62.98);
 
 SELECT DISTINCT t.CurrencyID, Name FROM Currency_Table AS t
 RIGHT JOIN ExchRateTable AS exch ON t.CurrencyID = exch.CurrencyID; 
 
 SELECT CurrencyID, ExchRateDate, ExchRate 
 FROM ExchRateTable
-WHERE ExchRateDate = '02-01-2020';
+WHERE id IN (SELECT q.Id FROM 
+(SELECT MAX(Id) as Id, CurrencyID, MAX(ExchRateDate) AS ExchDate 
+ FROM ExchRateTable 
+ WHERE ExchRateDate <= '2020-01-02' 
+ GROUP BY CurrencyID) AS q )
+ORDER BY ExchRateDate DESC;
+
+
